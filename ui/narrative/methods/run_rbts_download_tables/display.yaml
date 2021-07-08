@@ -1,0 +1,38 @@
+#
+# define display information
+#
+name: RBTnSeq Download Tables 
+
+tooltip: |
+    Download the tables from the data types used in RBTnSeq.
+
+screenshots: []
+
+icon: icon.png
+
+#
+# define a set of similar apps that might be useful to the user
+#
+suggestions:
+    apps:
+        related:
+            [app1, app2]
+        next:
+            [app3, app4]
+
+#
+# Configure the display and description of parameters
+#
+parameters :
+   input_table_refs  :
+        ui-name : |
+            RBTnSeq Table Type
+        short-hint : |
+            Choose the object(s) whose corresponding table(s) you want to download
+        long-hint  : |
+            Choose the object(s) whose corresponding table(s) you want to download.
+            Possible data types are the ones that start with RBTS_ 
+
+description : |
+    Download the table related to certain RBTnSeq objects, specifically the genes table,
+    the pool file, the poolcount file, and the experiments table.
