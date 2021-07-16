@@ -21,7 +21,8 @@
                 "valid_ws_types": ["KBaseRBTnSeq.RBTS_InputGenesTable",
                                    "KBaseRBTnSeq.RBTS_PoolFile",
                                    "KBaseRBTnSeq.RBTS_PoolCount",
-                                   "KBaseRBTnSeq.RBTS_ExperimentsTable"]
+                                   "KBaseRBTnSeq.RBTS_ExperimentsTable",
+                                   "KBaseRBTnSeq.RBTS_Gene_Fitness_T_Matrix"]
             }
         }
     ],

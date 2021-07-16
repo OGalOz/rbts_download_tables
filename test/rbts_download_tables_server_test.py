@@ -66,7 +66,7 @@ class rbts_download_tablesTest(unittest.TestCase):
 
         test_d = {
                 "workspace_name": self.wsName,
-                "input_table_refs": ["62572/9/1", "62572/11/2"]
+                "input_table_refs": ['62572/42/1']
         }
 
         ret = self.serviceImpl.run_rbts_download_tables(self.ctx, test_d)

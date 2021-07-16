@@ -1,6 +1,6 @@
 
 
-import logging, os
+import logging, os, sys
 import random, string
 
 def download_table_from_ref_to_dir(ref, ret_dp, dfu):
@@ -23,8 +23,11 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
     if "file_type" not in ResultantData:
         raise Exception("Expecting file_type to be in data object, won't download.")
     if "file_name" not in ResultantData:
-        logging.warning("Expecting file_name to be in data object, creating random name.")
-        op_file_name = create_random_string(6) + ".tsv"
+        if "fitness_file_name" not in ResultantData:
+            logging.warning("Expecting file_name to be in data object, creating random name.")
+            op_file_name = create_random_string(6) + ".tsv"
+        else:
+            op_file_name = ResultantData["fitness_file_name"] + "(|)" + ResultantData["t_scores_file_name"]
     else:
         original_file_name = ResultantData["file_name"]
         if "." in original_file_name:
@@ -32,39 +35,54 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
         else:
             op_file_name = original_file_name
 
+    op_fns = []
     ft = ResultantData["file_type"]
     if ft == "KBaseRBTnSeq.RBTS_PoolFile":
         op_file_name += ".pool"
-        KB_fh = ResultantData["poolfile"] 
+        op_fns.append(op_file_name)
+        KB_fh_list = [ResultantData["poolfile"]]
     elif ft == "KBaseRBTnSeq.RBTS_InputGenesTable":
         op_file_name = ref.replace("/","_") + "_" + op_file_name + ".GC" 
-        KB_fh = ResultantData["input_genes_table"] 
+        op_fns.append(op_file_name)
+        KB_fh_list = [ResultantData["input_genes_table"]]
     elif ft == "KBaseRBTnSeq.RBTS_PoolCount":
         op_file_name += ".poolcount"
-        KB_fh = ResultantData["poolcount"] 
+        op_fns.append(op_file_name)
+        KB_fh_list = [ResultantData["poolcount"]]
     elif ft == "KBaseRBTnSeq.RBTS_ExperimentsTable":
         op_file_name += ".experiments.tsv"
-        KB_fh = ResultantData["expsfile"] 
+        op_fns.append(op_file_name)
+        KB_fh_list = [ResultantData["expsfile"]]
+    elif ft == "KBaseRBTnSeq.RBTS_Gene_Fitness_T_Matrix":
+        fit_file_name = op_file_name.split("(|)")[0]
+        t_score_file_name = op_file_name.split("(|)")[1] 
+        op_fns = [fit_file_name, t_score_file_name]
+        KB_fh_list = [ResultantData["fit_scores_handle"], ResultantData["t_scores_handle"]]
     else:
         raise Exception(f"Cannot recognize filetype: {ft}")
-    
-    # If there is a duplicate
-    if op_file_name in os.listdir(ret_dp):
-        logging.warning(f"File name {op_file_name} already in output directory, creating random name.")
-        op_file_name = create_random_string(8) + ".tsv"
-    # Output filepath
-    op_fp = os.path.join(ret_dp, op_file_name)
+   
+    for i in range(len(op_fns)):
+        op_file_name = op_fns[i]
+        KB_fh = KB_fh_list[i]
+        # If there is a duplicate
+        if op_file_name in os.listdir(ret_dp):
+            logging.warning(f"File name {op_file_name} already in output directory, creating random name.")
+            op_file_name = create_random_string(8) + ".tsv"
+        # Output filepath
+        op_fp = os.path.join(ret_dp, op_file_name)
 
-    # Set params for shock to file
-    ShockToFileParams = {
-            "handle_id": KB_fh,
-            "file_path": op_fp, 
-            "unpack": "uncompress"
-            }
-    ShockToFileOutput = dfu.shock_to_file(ShockToFileParams)
-    logging.info(ShockToFileOutput)
-    
-    logging.info(f"Downloaded file for ref {ref}")
+        # Set params for shock to file
+        ShockToFileParams = {
+                "handle_id": KB_fh,
+                "file_path": op_fp, 
+                "unpack": "uncompress"
+                }
+        ShockToFileOutput = dfu.shock_to_file(ShockToFileParams)
+        logging.info(ShockToFileOutput)
+        
+        logging.info(f"Downloaded file for ref {ref} to location {op_fp}")
+
+
 
 
 
