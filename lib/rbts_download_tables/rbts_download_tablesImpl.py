@@ -67,6 +67,9 @@ class rbts_download_tables:
                 raise Exception("Expecting param input_table_refs to be a list"
                                 f", instead got {type(params['input_table_refs'])}")
             for ref in params["input_table_refs"]:
+                # Making sure there are no duplicates
+                if params["input_table_refs"].count(ref) > 1:
+                    raise Exception(f"Duplicate data object found with ref {ref}.")
                 logging.info(f"Beginning download process for ref {ref}")
                 download_table_from_ref_to_dir(ref, ret_dp, dfu)
 
