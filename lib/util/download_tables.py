@@ -19,15 +19,14 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
     ResultantData = dfu.get_objects(GetObjectsParams)['data'][0]['data']
     logging.info(f"Resultant data for ref {ref}:")
     logging.info(ResultantData)
-    
+   
+    op_file_name = None
     if "file_type" not in ResultantData:
         raise Exception("Expecting file_type to be in data object, won't download.")
     if "file_name" not in ResultantData:
         if "fitness_file_name" not in ResultantData:
             logging.warning("Expecting file_name to be in data object, creating random name.")
             op_file_name = create_random_string(6) + ".tsv"
-        else:
-            op_file_name = ResultantData["fitness_file_name"] + "(|)" + ResultantData["t_scores_file_name"]
     else:
         original_file_name = ResultantData["file_name"]
         if "." in original_file_name:
@@ -54,10 +53,16 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
         op_fns.append(op_file_name)
         KB_fh_list = [ResultantData["expsfile"]]
     elif ft == "KBaseRBTnSeq.RBTS_Gene_Fitness_T_Matrix":
-        fit_file_name = op_file_name.split("(|)")[0]
-        t_score_file_name = op_file_name.split("(|)")[1] 
-        op_fns = [fit_file_name, t_score_file_name]
-        KB_fh_list = [ResultantData["fit_scores_handle"], ResultantData["t_scores_handle"]]
+        fit_file_name = ResultantData["fitness_file_name"] 
+        t_score_file_name = ResultantData["t_score_file_name"] 
+        if "strain_fit_file_name" in ResultantData:
+            # strain_fit table is optional in the data type
+            op_fns = [fit_file_name, t_score_file_name, ResultantData["strain_fit_file_name"]]
+            KB_fh_list = [ResultantData["fit_scores_handle"], ResultantData["t_scores_handle"],
+                          ResultantData["strain_fit_handle"]]
+        else:
+            op_fns = [fit_file_name, t_score_file_name]
+            KB_fh_list = [ResultantData["fit_scores_handle"], ResultantData["t_scores_handle"]]
     else:
         raise Exception(f"Cannot recognize filetype: {ft}")
    
