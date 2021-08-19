@@ -35,18 +35,14 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
 
     op_fns = []
     ft = ResultantData["file_type"]
-    if ft == "KBaseRBTnSeq.RBTS_PoolFile":
+    if ft == "KBaseRBTnSeq.RBTS_MutantPool":
         op_file_name += ".pool"
         op_fns.append(op_file_name)
-        KB_fh_list = [ResultantData["poolfile"]]
-    elif ft == "KBaseRBTnSeq.RBTS_InputGenesTable":
-        op_file_name = ref.replace("/", "_") + "_" + op_file_name + ".GC"
-        op_fns.append(op_file_name)
-        KB_fh_list = [ResultantData["input_genes_table"]]
-    elif ft == "KBaseRBTnSeq.RBTS_PoolCount":
+        KB_fh_list = [ResultantData["mutantpool"]]
+    elif ft == "KBaseRBTnSeq.RBTS_BarcodeCount":
         op_file_name += ".poolcount"
         op_fns.append(op_file_name)
-        KB_fh_list = [ResultantData["poolcount"]]
+        KB_fh_list = [ResultantData["barcodecount"]]
     elif ft == "KBaseRBTnSeq.RBTS_ExperimentsTable":
         op_file_name += ".experiments.tsv"
         op_fns.append(op_file_name)
@@ -54,8 +50,15 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
     elif ft == "KBaseRBTnSeq.RBTS_Gene_Fitness_T_Matrix":
         fit_file_name = ResultantData["fitness_file_name"]
         t_score_file_name = ResultantData["t_score_file_name"]
-        if "strain_fit_file_name" in ResultantData:
-            # strain_fit table is optional in the data type
+        # strain_fit table is optional in the data type
+        if "strain_fit_file_name" not in ResultantData:
+            op_fns = [fit_file_name, t_score_file_name]
+            KB_fh_list = [
+                ResultantData["fit_scores_handle"],
+                ResultantData["t_scores_handle"],
+            ]
+        else:
+            # strain_fit included.
             op_fns = [
                 fit_file_name,
                 t_score_file_name,
@@ -65,12 +68,6 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
                 ResultantData["fit_scores_handle"],
                 ResultantData["t_scores_handle"],
                 ResultantData["strain_fit_handle"],
-            ]
-        else:
-            op_fns = [fit_file_name, t_score_file_name]
-            KB_fh_list = [
-                ResultantData["fit_scores_handle"],
-                ResultantData["t_scores_handle"],
             ]
     else:
         raise Exception(f"Cannot recognize filetype: {ft}")

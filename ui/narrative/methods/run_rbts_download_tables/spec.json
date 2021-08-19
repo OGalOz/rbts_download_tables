@@ -18,9 +18,8 @@
             "default_values": [""],
             "field_type" : "text",
             "text_options": {
-                "valid_ws_types": ["KBaseRBTnSeq.RBTS_InputGenesTable",
-                                   "KBaseRBTnSeq.RBTS_PoolFile",
-                                   "KBaseRBTnSeq.RBTS_PoolCount",
+                "valid_ws_types": ["KBaseRBTnSeq.RBTS_MutantPool",
+                                   "KBaseRBTnSeq.RBTS_BarcodeCount",
                                    "KBaseRBTnSeq.RBTS_ExperimentsTable",
                                    "KBaseRBTnSeq.RBTS_Gene_Fitness_T_Matrix"]
             }
