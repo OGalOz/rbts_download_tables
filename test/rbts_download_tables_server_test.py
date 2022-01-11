@@ -53,6 +53,7 @@ class rbts_download_tablesTest(unittest.TestCase):
             print('Test workspace was deleted')
 
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
+    '''
     def test_your_method(self):
         # Prepare test objects in workspace if needed using
         # self.getWsClient().save_objects({'workspace': self.getWsName(),
@@ -67,6 +68,19 @@ class rbts_download_tablesTest(unittest.TestCase):
         test_d = {
                 "workspace_name": self.wsName,
                 "input_table_refs": ['62572/42/1']
+        }
+
+        ret = self.serviceImpl.run_rbts_download_tables(self.ctx, test_d)
+    '''
+    def test_pool_download(self):
+        # Prepare test objects in workspace if needed using
+        # self.getWsClient().save_objects({'workspace': self.getWsName(),
+        #                                  'objects': []})
+        #
+
+        test_d = {
+                "workspace_name": self.wsName,
+                "input_table_refs": ['63063/44/1']
         }
 
         ret = self.serviceImpl.run_rbts_download_tables(self.ctx, test_d)

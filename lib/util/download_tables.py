@@ -13,13 +13,19 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
     """
     GetObjectsParams = {"object_refs": [ref]}
 
-    ResultantData = dfu.get_objects(GetObjectsParams)["data"][0]["data"]
+    getObjectsResults = dfu.get_objects(GetObjectsParams)
+    obj_info = getObjectsResults["data"][0]["info"]
+    ft = parse_file_type(obj_info[2]) 
+    logging.info("Caught file type: " + ft)
+    ResultantData = getObjectsResults["data"][0]["data"]
     logging.info(f"Resultant data for ref {ref}:")
     logging.info(ResultantData)
 
     op_file_name = None
+    '''
     if "file_type" not in ResultantData:
         raise Exception("Expecting file_type to be in data object, won't download.")
+    '''
     if "file_name" not in ResultantData:
         if "fitness_file_name" not in ResultantData:
             logging.warning(
@@ -34,7 +40,7 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
             op_file_name = original_file_name
 
     op_fns = []
-    ft = ResultantData["file_type"]
+    #ft = ResultantData["version"]
     if ft == "KBaseRBTnSeq.RBTS_MutantPool":
         op_file_name += ".pool"
         op_fns.append(op_file_name)
@@ -78,7 +84,8 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
         # If there is a duplicate
         if op_file_name in os.listdir(ret_dp):
             logging.warning(
-                f"File name {op_file_name} already in output directory, creating random name."
+                f"File name {op_file_name} already in output directory, " + \
+                "creating random name."
             )
             op_file_name = create_random_string(8) + ".tsv"
         # Output filepath
@@ -94,6 +101,31 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
         logging.info(ShockToFileOutput)
 
         logging.info(f"Downloaded file for ref {ref} to location {op_fp}")
+
+def parse_file_type(ft_str):
+    ''' The goal of this is to convert a string of the form:
+     KBaseRBTnSeq.RBTS_Gene_Fitness_T_Matrix-3.0  TO ->
+     KBaseRBTnSeq.RBTS_Gene_Fitness_T_Matrix
+    '''
+
+    if not isinstance(ft_str, str):
+        raise Exception("Upon downloading object, expecting obj info " + \
+                        "to be a string.")
+
+    split_str = ft_str.split("-")
+    num = split_str[-1]
+    last_is_num = True
+    try:
+        float(num)
+    except ValueError:
+        last_is_num = False 
+    if not last_is_num:
+        logging.warning("File Type ending expected float at end: " + ft_str)
+
+    ft = ''.join(split_str[:-1])
+    return ft
+    
+
 
 
 def create_random_string(length):
