@@ -77,7 +77,8 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
             ]
     else:
         raise Exception(f"Cannot recognize filetype: {ft}")
-
+    
+    op_fps = []
     for i in range(len(op_fns)):
         op_file_name = op_fns[i]
         KB_fh = KB_fh_list[i]
@@ -90,6 +91,7 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
             op_file_name = create_random_string(8) + ".tsv"
         # Output filepath
         op_fp = os.path.join(ret_dp, op_file_name)
+        op_fps.append(op_fp)
 
         # Set params for shock to file
         ShockToFileParams = {
@@ -101,6 +103,8 @@ def download_table_from_ref_to_dir(ref, ret_dp, dfu):
         logging.info(ShockToFileOutput)
 
         logging.info(f"Downloaded file for ref {ref} to location {op_fp}")
+
+    return op_fps
 
 def parse_file_type(ft_str):
     ''' The goal of this is to convert a string of the form:

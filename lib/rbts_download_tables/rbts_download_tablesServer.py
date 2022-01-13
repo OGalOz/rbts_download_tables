@@ -342,6 +342,10 @@ class Application(object):
                              name='rbts_download_tables.run_rbts_download_tables',
                              types=[dict])
         self.method_authentication['rbts_download_tables.run_rbts_download_tables'] = 'required'  # noqa
+        self.rpc_service.add(impl_rbts_download_tables.download_KB_RBTS_table,
+                             name='rbts_download_tables.download_KB_RBTS_table',
+                             types=[dict])
+        self.method_authentication['rbts_download_tables.download_KB_RBTS_table'] = 'required'  # noqa
         self.rpc_service.add(impl_rbts_download_tables.status,
                              name='rbts_download_tables.status',
                              types=[dict])
