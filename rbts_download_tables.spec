@@ -31,6 +31,24 @@ module rbts_download_tables {
         input_table_refs input_table_refs;
     } DownloadTableParams;
 
+
+    /*
+    filepath is path to a downloaded file
+    */
+    typedef string filepath;
+
+    /*
+    A list of filepaths
+    */
+    typedef list<filepath> fps;
+
+    typedef structure {
+        rbts_ref ref;
+        fps fps;
+    } ref2fpTuple;
+
+    typedef list<ref2fpTuple> ref2fps;
+
     /*
         exit_code (int) success is 0, failure is any number larger,
                         for each ref failure exit_code += 1.
@@ -39,7 +57,7 @@ module rbts_download_tables {
 
     typedef structure {
         int exit_code;
-        string filepath;
+        ref2fps ref2fps;
     } DownloadTableResults;
 
     funcdef download_KB_RBTS_table(DownloadTableParams params) returns (DownloadTableResults output) authentication required;

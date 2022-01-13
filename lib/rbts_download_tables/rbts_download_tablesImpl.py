@@ -138,7 +138,7 @@ class rbts_download_tables:
                 shutil.rmtree(ret_dp)
         os.mkdir(ret_dp)
 
-        ref2loc_d = {}
+        ref2fps = []
         exit_code = 0 
         if "input_table_refs" not in params:
             raise Exception("Params 'input_table_refs' needed to run program. Not found.")
@@ -153,16 +153,23 @@ class rbts_download_tables:
                         raise Exception(f"Duplicate data object found with ref {ref}.")
                     logging.info(f"Beginning download process for ref {ref}")
                     locs = download_table_from_ref_to_dir(ref, ret_dp, dfu)
-                    ref2loc_d[ref] = locs
+                    ref2fpTuple = {
+                            "ref": ref,
+                            "fps": locs
+                    }
+                    ref2fps.append(ref2fpTuple)
                 except Exception as inst:
                     logging.critical("Download failed for ref: " + ref)
                     exit_code += 1
-
-
+        
+    
         output = {
             'exit_code': exit_code,
-            'refs2fps': ref2loc_d 
+            'refs2fps': ref2fps 
         }
+
+        logging.info("Finished downloading. Resulting structure:")
+        logging.info(output)
 
 
 
