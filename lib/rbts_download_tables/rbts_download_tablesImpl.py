@@ -91,11 +91,16 @@ class rbts_download_tables:
         }
 
         report_util = KBaseReport(self.callback_url)
-        report_info = report_util.create_extended_report({
-                                        'message': "Finished running RBTS Download Tables.",
-                                        'file_links': [dir_link],
-                                        'workspace_name': params['workspace_name']
-                                        })
+
+        report_data = {
+            
+            'message': "Finished running RBTS Download Tables.",
+            'file_links': [dir_link],
+            'workspace_name': params['workspace_name']
+
+        }
+
+        report_info = report_util.create_extended_report(report_data)
 
         logging.info("report_info after creating extended report.")
         logging.info(report_info)
